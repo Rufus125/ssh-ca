@@ -71,12 +71,14 @@ Now for initial setup, do the following:
     7. Edit `server:/etc/ssh/sshd_config` once more and add the line `HostCertificate /etc/ssh/ssh_host_ed25519_key-cert.pub`
     8. Again, restart sshd - see above
     9. Again, continue reading the next step - otherwise, nothing will change.
-5. Adapt known_hosts: Let your client know that it can trust servers with a certificate signed by your CA
+5. Adapt known_hosts: Let your client know that it can trust servers with a certificate signed by your CA `scp auth-server:/root/ssh-ca/ca.pub ~/.ssh/ca.pub
+`
     1. Edit `desktop:~/.ssh/known_hosts` (Backup!)
     2. If you are feeling lucky (Backup!!), delete all the contents of the file. Remember that it's not my fault.
     3. Add a new line that reads as follows: `@cert-authority *.domain.com ssh-ed25519 *`.
         - The `ssh-ed25519 *` part should be the contents of the `ca.pub` file.
         - `*.domain.com` could also be IP addresses - for example, `192.168.0.*`.
+        - `echo "@cert-authority *.domain.com $(cat ~/.ssh/ca.pub)" >> ~/.ssh/known_hosts`
     4. SSH to your server. Hope to not see an `Authenticate?` question. If you really want to test it, delete all the other lines in the `known_hosts` file. Hence, the only option for the server to authenticate is to present a signed certificate.
 
 ## Renewing certificates
