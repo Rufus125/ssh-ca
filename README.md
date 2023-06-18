@@ -44,14 +44,16 @@ For the setup of my certificate authority (CA), I will use the following machine
 
 Now for initial setup, do the following:
 
-1. The SSH certificate authority itself essentially is a public/private key pair. Create it: `root@auth-server:/root/ssh-ca# ssh-keygen -t ed25519 -C ca@your.domain -f ca`. Put a password on this one. Also, store the password.
+1. The SSH certificate authority itself essentially is a public/private key pair. Create it: `root@auth-server:/root# git clone https://github.com/Rufus125/ssh-ca && cd ssh-ca && ssh-keygen -t ed25519 -C ca@your.domain -f ca`. Put a password on this one. Also, store the password.
 2. Create the desktop certificate:
-    1. Create a directory `auth-server:/root/ssh-ca/desktop`. The last part (`desktop`) needs to be unique per client/server for my script to work! Also, for a server, it should be the domain name - so, `server.example.com`. I will use this directory name as the certificate name and maybe as a principal.
-    2. Copy `user@desktop:~/.ssh/id_{rsa,ed25519,...}.pub` to `root@auth-server:/root/ssh-ca/desktop/id_{...}.pub`
+    1. Create a directory `auth-server: mkdir /root/ssh-ca/desktop`. The last part (`desktop`) needs to be unique per client/server for my script to work! Also, for a server, it should be the domain name - so, `server.example.com`. I will use this directory name as the certificate name and maybe as a principal.
+    2. Copy `user@desktop:~/.ssh/id_{rsa,ed25519,...}.pub` to `root@auth-server:/root/ssh-ca/desktop/id_{...}.pub` `scp  ~/.ssh/id_rsa.pub auth-server:/root/ssh-ca/desktop/id_rsa.pub
+`
     3. Create the file `auth-server:/root/ssh-ca/desktop/principals` and add only one line: `server_username` - the username you want login as on the server
     4. Go to the base directory of this script and run `root@auth-server:/root/ssh-ca# ./cert.sh desktop`
     5. Find a new file `auth-server:/root/ssh-ca/desktop/current-cert.pub`. Be excited!
-    6. Copy this `current-cert.pub` to `user@desktop:~/.ssh/id_{same_as_before}-cert`. Omit the `.pub` part of the filename!
+    6. Copy this `current-cert.pub` to `user@desktop:~/.ssh/id_{same_as_before}-cert`. Omit the `.pub` part of the filename! `scp auth-server:/root/ssh-ca/desktop/current-cert.pub ~/.ssh/id_rsa-cert
+`
     7. Continue reading the next step. This is important - otherwise, you have nothing.
 3. Authorize signed certificates on the server
     1. Copy `auth-server:/root/ssh-ca/ca.pub` to `server:/etc/ssh/ca.pub`
